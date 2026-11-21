@@ -32,6 +32,62 @@ content="Restaurant Voice Search">
       <!-- Style CSS -->
       <link rel="stylesheet" href="css/style.css" />
    </head>
+	
+function startVoiceSearch() {
+
+    const SpeechRecognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+        alert("Please use Google Chrome for voice search.");
+        return;
+    }
+
+    const recognition = new SpeechRecognition();
+
+    // Language selection
+    recognition.lang = "ml-IN";
+
+    // Voice optimization
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 3;
+
+    recognition.onstart = function() {
+        document.getElementById("voiceStatus")
+        .innerText = "🎤 Listening...";
+    };
+
+    recognition.onresult = function(event) {
+
+        const result =
+        event.results[event.results.length - 1][0].transcript;
+
+        document.getElementById("searchInput").value = result;
+
+        if (event.results[event.results.length - 1].isFinal) {
+
+            document.getElementById("voiceStatus")
+            .innerText = "Voice recognized successfully!";
+
+            searchMenu();
+        }
+    };
+
+    recognition.onerror = function(event) {
+
+        document.getElementById("voiceStatus")
+        .innerText = "Voice error: " + event.error;
+    };
+
+    recognition.onend = function() {
+        console.log("Voice search completed");
+    };
+
+    recognition.start();
+}
+
    <body>
       <!-- ============================================================
          TOP BAR
